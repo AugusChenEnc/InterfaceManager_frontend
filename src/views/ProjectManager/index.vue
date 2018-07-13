@@ -2,17 +2,17 @@
     <el-row id="projectManager">
         <el-row type="flex">
             <el-col :span="5">
-                <el-button type="primary" icon="el-icon-circle-plus-outline" @click="changeProjectDialog">增加项目</el-button>
+                <el-button type="primary" icon="el-icon-circle-plus-outline" @click="openAddProjectDialog">增加项目</el-button>
             </el-col>
             <el-col :span="19">
-                <el-form :inline="true" ref="projectForm" :model="projectForm"  style="float: right">
+                <el-form :inline="true" :model="projectForm"  style="float: right">
                     <el-form-item label="项目名称:">
-                        <el-input v-model="projectForm.pname" placeholder="项目名称" class="au-input"></el-input>
+                        <el-input v-model="projectForm.name" placeholder="项目名称" class="au-input"></el-input>
                     </el-form-item>
                     <el-form-item label="启动日期:">
                        <el-form-item>
                            <el-date-picker
-                                v-model="projectForm.date" 
+                                v-model="projectForm.startDate" 
                                 type="daterange" 
                                 start-placeholder="开始日期" 
                                 end-placeholder="结束日期" 
@@ -23,11 +23,11 @@
                        </el-form-item>
                     </el-form-item>
                     <el-form-item label="完成状态:">
-                        <el-select v-model="projectForm.region" placeholder="状态" class="au-select">
-                            <el-option label="启动" value="start"></el-option>
-                            <el-option label="停止" value="end"></el-option>
-                            <el-option label="进行中" value="running"></el-option>
-                            <el-option label="结束" value="over"></el-option>
+                        <el-select v-model="projectForm.status" placeholder="状态" class="au-select">
+                            <el-option label="启动" value="1"></el-option>
+                            <el-option label="暂停" value="2"></el-option>
+                            <el-option label="进行中" value="3"></el-option>
+                            <el-option label="结束" value="4"></el-option>
                         </el-select>
                     </el-form-item>
                     <el-form-item>
@@ -41,14 +41,14 @@
                 <el-table-column prop="name" label="项目名称" width="200"></el-table-column>
                 <el-table-column prop="area" label="所属地区"></el-table-column>
                 <el-table-column prop="startDate" label="启动日期" :formatter="dateFormat" width="150"></el-table-column>
-                <el-table-column prop="endDate" label="完成日期"  width="150"></el-table-column>
-                <el-table-column prop="status" label="完成状态" ></el-table-column>
+                <el-table-column prop="endDate" label="完成日期" :formatter="dateFormat" width="150"></el-table-column>
+                <el-table-column prop="status" label="完成状态" :formatter="selectFormat" ></el-table-column>
                 <el-table-column prop="description" label="项目描述" width="500"></el-table-column>
                 <el-table-column fixed="right" label="操作" width="150">
                     <template slot-scope="scope">
                         <el-button
                             size="mini"
-                            @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+                            @click="openUpdateProjectDialog(scope.row)">编辑</el-button>
                         <el-button
                             size="mini"
                             type="danger"
@@ -61,11 +61,11 @@
             <el-pagination
               @size-change="handleSizeChange"
               @current-change="handleCurrentChange"
-              :current-page="currentPage4"
-              :page-sizes="[10, 20, 30, 40]"
-              :page-size="100"
+              :current-page="pageNum"
+              :page-sizes="[2, 4, 6, 8]"
+              :page-size="pageSize"
               layout="total, sizes, prev, pager, next, jumper"
-              :total="400">
+              :total="total">
             </el-pagination>
         </el-row>
 
@@ -78,41 +78,44 @@
 <script>
 import { mapActions  } from 'vuex'
 import ProjectDetails from '@/views/ProjectManager/projectDetails'
-import { fetchGet } from '@/utils/api'
+import { fetchPost } from '@/utils/api'
 
 export default{
     name: 'projectManager',
     data() {
       return {
         projectForm:{
-            pname: '',
-            date:[] ,
-            region: ''
+            name: '',
+            startDate:[] ,
+            status: ''
         },
         detailsTitle: '增加项目',
-        fullWidth: null,
-        currentPage4: 4,
-        tableData: []
+        tableData: [],
+        total: 1,
+        pageNum: 1,
+        pageSize: 2,
       }
     },
     created(){
-        this.loadTableData()
+        this.loadTableData(this.pageNum, this.pageSize);
     },
     components: { ProjectDetails },
     methods: {
         ...mapActions(['changeProjectDialog']),
-        loadTableData(){
-            console.log('执行查询');
-            fetchGet({
-                url: '/project/getAll'
+        loadTableData(pageNum, pageSize){
+            let _projectForm = this.projectForm;
+
+            fetchPost({
+                url: '/project/getAll/' + pageNum + "/" + pageSize,
+                params: _projectForm
             }).then(response => {
-                console.log(response)
                 if (response.meta.statusCode == 200){
                     let _pageData = response.data;
-
-                    //1、load table data
+                    
                     this.tableData = _pageData.list;
-
+                    this.total = _pageData.total;
+                    this.pageNum = _pageData.pageNum;
+                    this.pageSize = _pageData.pageSize;
                 } else {
                     this.$message.error('数据加载异常');
                 }
@@ -120,27 +123,54 @@ export default{
                 this.$message.error(error.meta.message);
             });
         },
-        dateFormat:function(row, column) {
+        //format
+        dateFormat(row, column) {
             let date = row[column.property];
-            if (date == undefined) {
-                return "";
+            if (date == null) {
+                return "待定";
             }
-            return moment(date).format("YYYY-MM-DD");
+            return this.$moment(date).format("YYYY-MM-DD");
         },
-        handleEdit(index, row) {
-            console.log(index, row);
+        selectFormat(row, column) {
+            let data = row[column.property];
+            let result = '启动';
+            switch(data) {
+                case 1:
+                    result = '启动';
+                    break;
+                case 2:
+                    result = '暂停';
+                    break;
+                case 3:
+                    result = '进行中';
+                    break;
+                case 4:
+                    result = '结束';
+                    break;
+            }
+            return result;
+        },
+        //dialog
+        openAddProjectDialog(){
+            this.detailsTitle = '增加项目';
+            this.changeProjectDialog();
+        },
+        openUpdateProjectDialog(row){
+            console.log(row.id);
+            this.detailsTitle = '修改项目';
+            this.changeProjectDialog();
         },
         handleDelete(index, row) {
             console.log(index, row);
         },
-        handleSizeChange(val) {
-            console.log(`每页 ${val} 条`);
+        handleSizeChange(pageSize) {
+            this.loadTableData(1, pageSize);
         },
-        handleCurrentChange(val) {
-            console.log(`当前页: ${val}`);
+        handleCurrentChange(pageNum) {
+            this.loadTableData(pageNum, this.pageSize);
         },
         onsubmit(){
-            console.log('执行查询')
+            this.loadTableData(1, this.pageSize);
         }
     }
 }

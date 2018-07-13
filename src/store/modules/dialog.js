@@ -4,7 +4,6 @@ const dialog = {
 	},
 	mutations: {
 		change_project_dialog: (state) => {
-			console.log(state.projectDialog)
 			state.projectDialog =  !state.projectDialog;
 		}
 	},

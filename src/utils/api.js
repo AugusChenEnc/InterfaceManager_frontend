@@ -24,7 +24,7 @@ export function fetchAxios(props) {
 			resolve(response.data)
 		}).catch(error => {
 			let _data = error.response.data;
-			//统一处理
+			//统一处理 如果登录超时就跳转登录页面
 			if (_data.meta.statusCode == 701) {
 				router.push({ path: '/login' });
 			}
