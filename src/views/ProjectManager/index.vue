@@ -24,6 +24,7 @@
                     </el-form-item>
                     <el-form-item label="完成状态:">
                         <el-select v-model="projectForm.status" placeholder="状态" class="au-select">
+                            <el-option label="请选择状态" value="-1"></el-option>
                             <el-option label="启动" value="1"></el-option>
                             <el-option label="暂停" value="2"></el-option>
                             <el-option label="进行中" value="3"></el-option>
@@ -61,14 +62,13 @@
             <el-pagination
               @size-change="handleSizeChange"
               @current-change="handleCurrentChange"
-              :current-page="pageNum"
+              :current-page="page.pageNum"
               :page-sizes="[2, 4, 6, 8]"
-              :page-size="pageSize"
+              :page-size="page.pageSize"
               layout="total, sizes, prev, pager, next, jumper"
-              :total="total">
+              :total="page.total">
             </el-pagination>
         </el-row>
-
 
         <!-- 弹框 -->
         <project-details :title="detailsTitle"></project-details>
@@ -87,13 +87,15 @@ export default{
         projectForm:{
             name: '',
             startDate:[] ,
-            status: ''
+            status: '-1'
+        },
+        page: {
+            total: 1,
+            pageNum: 1,
+            pageSize: 2
         },
         detailsTitle: '增加项目',
         tableData: [],
-        total: 1,
-        pageNum: 1,
-        pageSize: 2,
       }
     },
     created(){
@@ -102,20 +104,20 @@ export default{
     components: { ProjectDetails },
     methods: {
         ...mapActions(['changeProjectDialog']),
-        loadTableData(pageNum, pageSize){
-            let _projectForm = this.projectForm;
+        loadTableData(){
+            let _projectForm = this.requestDaterangeProcesser(this.page, this.projectForm);
 
             fetchPost({
-                url: '/project/getAll/' + pageNum + "/" + pageSize,
+                url: '/project/getAll/',
                 params: _projectForm
             }).then(response => {
                 if (response.meta.statusCode == 200){
                     let _pageData = response.data;
                     
                     this.tableData = _pageData.list;
-                    this.total = _pageData.total;
-                    this.pageNum = _pageData.pageNum;
-                    this.pageSize = _pageData.pageSize;
+                    this.page.total = _pageData.total;
+                    this.page.pageNum = _pageData.pageNum;
+                    this.page.pageSize = _pageData.pageSize;
                 } else {
                     this.$message.error('数据加载异常');
                 }
@@ -164,13 +166,36 @@ export default{
             console.log(index, row);
         },
         handleSizeChange(pageSize) {
-            this.loadTableData(1, pageSize);
+            this.page.pageNum = 1;
+            this.page.pageSize = pageSize;
+            this.loadTableData();
         },
         handleCurrentChange(pageNum) {
-            this.loadTableData(pageNum, this.pageSize);
+            this.page.pageNum = pageNum;
+            this.loadTableData();
         },
         onsubmit(){
             this.loadTableData(1, this.pageSize);
+        },
+        requestDaterangeProcesser(page, requestData){
+            let newRequestData = new Object();
+            newRequestData.pageNum = page.pageNum;
+            newRequestData.pageSize = page.pageSize;
+            newRequestData.sort = 'start_date desc';
+            newRequestData.name = requestData.name;
+            newRequestData.status = requestData.status;
+        
+            let startDate = requestData.startDate;
+            if (startDate.length > 0){
+                newRequestData.startDate = startDate[0];
+                newRequestData.endDate = startDate[1];
+            } else {
+                newRequestData.startDate = "";
+                newRequestData.endDate = "";
+            }
+
+            console.log(newRequestData);
+            return newRequestData;
         }
     }
 }
@@ -182,7 +207,7 @@ export default{
     .au-picker
         width 23rem
     .au-select
-        width 10rem
+        width 12rem
     .el-row
         margin 1rem 0
     .au-table ::-webkit-scrollbar
