@@ -63,7 +63,7 @@
               @size-change="handleSizeChange"
               @current-change="handleCurrentChange"
               :current-page="page.pageNum"
-              :page-sizes="[2, 4, 6, 8]"
+              :page-sizes="[10, 15, 20]"
               :page-size="page.pageSize"
               layout="total, sizes, prev, pager, next, jumper"
               :total="page.total">
@@ -71,7 +71,7 @@
         </el-row>
 
         <!-- 弹框 -->
-        <project-details :title="detailsTitle"></project-details>
+        <project-details :title="detailsTitle" @changeDetails="changeDetails"></project-details>
     </el-row>
 </template>
 
@@ -92,7 +92,7 @@ export default{
         page: {
             total: 1,
             pageNum: 1,
-            pageSize: 2
+            pageSize: 10
         },
         detailsTitle: '增加项目',
         tableData: [],
@@ -174,6 +174,9 @@ export default{
             this.page.pageNum = pageNum;
             this.loadTableData();
         },
+        changeDetails(){
+            this.loadTableData(this.pageNum, this.pageSize);
+        },
         onsubmit(){
             this.loadTableData(1, this.pageSize);
         },
@@ -186,7 +189,7 @@ export default{
             newRequestData.status = requestData.status;
         
             let startDate = requestData.startDate;
-            if (startDate.length > 0){
+            if (startDate != null && startDate.length > 0){
                 newRequestData.startDate = startDate[0];
                 newRequestData.endDate = startDate[1];
             } else {
@@ -194,7 +197,6 @@ export default{
                 newRequestData.endDate = "";
             }
 
-            console.log(newRequestData);
             return newRequestData;
         }
     }
