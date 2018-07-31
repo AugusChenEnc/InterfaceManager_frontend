@@ -12,7 +12,7 @@
         <!-- 正文部分 -->
         <el-container>
             <!-- 头部 -->
-            <el-header height="60px" :style="{ 'background-color': primaryColor }">
+            <el-header height="6rem" :style="{ 'background-color': primaryColor }">
                 <div class="menu-collapse"  @click.prevent="collapse"><i :class="shrinkIcon"></i></div>
                 <breadcrumb></breadcrumb>
                 <div class="au-userinfo">

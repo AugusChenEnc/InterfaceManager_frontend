@@ -91,7 +91,7 @@ export default {
         background-size cover
         overflow hidden
     .rule-form 
-        border-radius(5px)
+        border-radius(0.5rem)
         background-clip padding-box
         margin 18rem auto
         width 35rem

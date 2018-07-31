@@ -1,8 +1,8 @@
 {
-  "name": "recp_car_frontend",
+  "name": "InterfaceManager_frontend",
   "version": "1.0.0",
   "description": "Reception car distribution system",
-  "author": "YouJia",
+  "author": "Augus",
   "private": true,
   "scripts": {
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
