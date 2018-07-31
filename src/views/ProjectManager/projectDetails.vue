@@ -55,7 +55,7 @@
 
 <script>
 import { mapGetters , mapActions } from 'vuex'
-import { fetchPost } from '@/utils/api'
+import { fetchPost , fetchPut } from '@/utils/api'
 
 export default{
 	name: 'projectDetails',
@@ -63,14 +63,25 @@ export default{
 		title:{
 			type: String,
 			default: '增加项目'
+		},
+		detailsData:{
+			default: this.projectDetailsForm
 		}
 	},
 	computed: {
 		...mapGetters(['projectDialog'])
 	},
+	watch: {
+		detailsData: function(data) {
+			this.projectDetailsForm = data;
+			//把int 类型装换为String
+			this.projectDetailsForm.status = this.projectDetailsForm.status.toString();
+		}
+	},
 	data() {
 		return {
 			projectDetailsForm:{
+				id: '',
 				name: '',
                 area: '',
                 status: '',
@@ -96,31 +107,49 @@ export default{
 					let endDate = detailsForm.endDate;
 					let status = detailsForm.status;
 
-					if (endDate != null && endDate != "" && endDate < startDate) {
+					if (endDate != null && endDate != "") {
 						if (status != 4) {
 							this.$message.error("项目结束，请选择结束状态！！");
 							return;
 						}
-						this.$message.error("请正确填写结束日期，结束日期不可小于开始日期！！");
-						return;
-					}
-					if (status == 4 && endDate == null || status == 4 && endDate == "") {
-						this.$message.error("项目结束，请填写结束日期");
-						return;
+						if (endDate < startDate) {
+							this.$message.error("请正确填写结束日期，结束日期不可小于开始日期！！");
+							return;
+						}
+					} else {
+						if (status == 4) {
+							this.$message.error("项目结束，请填写结束日期");
+							return;
+						}
 					}
 
-					fetchPost({
-						url:  '/project/saveProject',
-						params: detailsForm
-					}).then(response => {
-						if (response.meta.statusCode = 200) {
-							this.$emit('changeDetails', 'ok');
-							this.changeProjectDialog();
-							this.$refs.projectDetailsForm.resetFields();
-						}
-					}).catch(error => {
-						this.$message.error("保存失败");
-					})
+					if (detailsForm.id != null || detailsForm.id != "") {
+						fetchPut({
+							url: '/project/updateProject',
+							params: detailsForm
+						}).then(response => {
+							if (response.meta.statusCode = 200) {
+								this.$emit('changeDetails', 'ok');
+								this.changeProjectDialog();
+								this.$refs.projectDetailsForm.resetFields();
+							}
+						}).catch(error => {
+							this.$message.success('保存失败');	
+						});
+					} else {
+						fetchPost({
+							url:  '/project/saveProject',
+							params: detailsForm
+						}).then(response => {
+							if (response.meta.statusCode = 200) {
+								this.$emit('changeDetails', 'ok');
+								this.changeProjectDialog();
+								this.$refs.projectDetailsForm.resetFields();
+							}
+						}).catch(error => {
+							this.$message.error("保存失败");
+						})
+					}
 				}
 			});
 		},

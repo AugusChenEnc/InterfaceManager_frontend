@@ -71,14 +71,14 @@
         </el-row>
 
         <!-- 弹框 -->
-        <project-details :title="detailsTitle" @changeDetails="changeDetails"></project-details>
+        <project-details :title="detailsTitle" :detailsData="detailsData" @changeDetails="changeDetails"></project-details>
     </el-row>
 </template>
 
 <script>
 import { mapActions  } from 'vuex'
 import ProjectDetails from '@/views/ProjectManager/projectDetails'
-import { fetchPost } from '@/utils/api'
+import { fetchPost , fetchDelete } from '@/utils/api'
 
 export default{
     name: 'projectManager',
@@ -96,6 +96,15 @@ export default{
         },
         detailsTitle: '增加项目',
         tableData: [],
+        detailsData: {
+            id: '',
+            name: '',
+            area: '',
+            status: '',
+            startDate: '',
+            endDate: '',
+            description: ''
+        }
       }
     },
     created(){
@@ -158,13 +167,19 @@ export default{
             this.changeProjectDialog();
         },
         openUpdateProjectDialog(row){
-            console.log(row.id);
+            this.detailsData = row;
             this.detailsTitle = '修改项目';
             this.changeProjectDialog();
         },
         handleDelete(index, row) {
-            console.log(index, row);
-        },
+            fetchDelete({
+                url: '/project/removeProject/' + row.id
+            }).then(response => {
+                this.loadTableData();
+            }).catch(error => { 
+                this.$message.error("删除失败");
+            });
+        },  
         handleSizeChange(pageSize) {
             this.page.pageNum = 1;
             this.page.pageSize = pageSize;
@@ -175,10 +190,10 @@ export default{
             this.loadTableData();
         },
         changeDetails(){
-            this.loadTableData(this.pageNum, this.pageSize);
+            this.loadTableData();
         },
         onsubmit(){
-            this.loadTableData(1, this.pageSize);
+            this.loadTableData();
         },
         requestDaterangeProcesser(page, requestData){
             let newRequestData = new Object();
