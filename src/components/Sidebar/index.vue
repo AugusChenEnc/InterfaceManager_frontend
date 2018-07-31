@@ -7,7 +7,7 @@
             show-timeout="300" 
             hide-timeout="300">
             
-            <sidebar-item :list="list" :basepaths="basepaths" :class="{'au-menu-wrapper': isCollapse}"></sidebar-item>
+            <sidebar-item :list="list" :basepaths="basepaths" :class="{'au-menu-wrapper': isCollapse}" class="au-sidebar-item"></sidebar-item>
         </el-menu>
     </el-scrollbar>
 </template>
@@ -41,9 +41,13 @@ export default {
 </script>
 
 <style scoped lang="stylus">
+    .el-menu
+        border 0
     .el-menu-vertical
-        height calc(100vh - 70px)
+        height calc(100vh - 4.6rem)
     .el-menu-vertical:not(.el-menu--collapse)
         width: 25rem;
         min-height: 40rem;
+    .au-sidebar-item
+        margin-bottom 2rem;
 </style>

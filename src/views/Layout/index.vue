@@ -1,7 +1,7 @@
 <template>
     <el-container>
         <!-- 侧边栏 -->
-        <el-row>
+        <el-row class="au-sidebar">
             <el-row class="au-logo" :style="{ 'background-color': primaryColor }">
                 <img src="~assets/images/social_logo_32.ico" alt="element-logo" class="au-header-logo-shrink" v-show="logoShow"/>
                 <span v-show="!logoShow"><img src="~assets/images/social_logo.ico" alt="element-logo" class="au-header-logo"/> Augus </span>
@@ -31,11 +31,13 @@
             <el-main>
                 <Tags></Tags>
                 <!-- transition 可以set过渡动画效果（等待研究） -->
-                <div class="home-content">
-                    <transition>
-                      <router-view></router-view>
-                    </transition>
-                </div>
+                <el-scrollbar class="home-content-scrollbar">
+                    <div class="home-content">
+                        <transition>
+                          <router-view></router-view>
+                        </transition>
+                    </div>
+                </el-scrollbar>
             </el-main>
         </el-container>
 
@@ -114,6 +116,8 @@ export default {
     .breadcrumb-comp
         float left
         margin 2rem 0
+    .el-scrollbar__wrap
+        overflow-x: hidden;
 </style>
 
 <style scoped lang="stylus" >
@@ -136,7 +140,7 @@ export default {
                 float right
     .menu-collapse
         width 1.4rem
-        height 6rem
+        height 6re
         line-height 6rem
         padding 0 2.4rem
         cursor pointer
@@ -146,10 +150,15 @@ export default {
     padding 0
 .el-radio-group
     width 30rem
+.home-content-scrollbar
+    height calc(100vh - 10rem) 
 .home-content
-    margin 1.6rem
+    width 98%
+    margin 2rem auto
     font-size 1.4rem
 
+.au-sidebar
+    border-right: solid 1px #c5c9caf2;
 .au-logo
     height 6rem
     font-size 2.5rem
