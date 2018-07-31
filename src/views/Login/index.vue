@@ -87,7 +87,7 @@ export default {
     .login-container 
         width 100%
         height 100%
-        background url('~assets/images/timg.jpg') no-repeat
+        background url('~assets/images/login_background.jpg') no-repeat
         background-size cover
         overflow hidden
     .rule-form 
