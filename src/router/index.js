@@ -12,7 +12,8 @@ const routes = [
             { path: 'home', name: 'Home', component: () => import('@/views/Home'), meta: { title: 'menu.home', icon: 'el-icon-location' } },
             
             //project
-            { path: 'project/projectManager', name: 'projectManager', component:() => import('@/views/ProjectManager'), meta: { title: 'menu.projectManager', icon: 'el-icon-menu' }}
+            { path: 'project/projectManager', name: 'projectManager', component:() => import('@/views/ProjectManager'), meta: { title: 'menu.projectManager', icon: 'el-icon-menu' }}, 
+            { path: 'interface/interfaceManager', name: 'interfaceManager', component:() => import('@/views/InterfaceManager'), meta: {  title: 'menu.interfaceManager', icon: 'el-icon-setting'}},
         ]
     },
     //no loader router

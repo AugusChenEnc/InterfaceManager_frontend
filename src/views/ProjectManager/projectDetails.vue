@@ -3,6 +3,9 @@
     <el-dialog :title="title" :visible.sync="projectDialog.projectDialog">
        <el-form ref="projectDetailsForm" :rules="projectRules" :inline="true" :model="projectDetailsForm"  label-position="right" label-width="90px">
        		<el-row>
+				<el-form-item label="id" prop="id" v-show="false">
+					<el-input v-model="projectDetailsForm.id"></el-input>
+				</el-form-item>
 	  			<el-form-item label="项目名称:" prop="name">
 	      			<el-input v-model="projectDetailsForm.name" placeholder="项目名称" class="au-input"></el-input>
 	      		</el-form-item>
@@ -123,7 +126,8 @@ export default{
 						}
 					}
 
-					if (detailsForm.id != null || detailsForm.id != "") {
+					console.log(detailsForm.id);
+					if (detailsForm.id != null && detailsForm.id != "") {
 						fetchPut({
 							url: '/project/updateProject',
 							params: detailsForm

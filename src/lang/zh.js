@@ -14,6 +14,7 @@ export default{
 		error: '404',
 		home: '主页',
 		projectManager: '项目管理',
+		interfaceManager: '接口管理',
 		projectList: '项目列表',
 		crossCar: '跨境车',
 		vehicleDispatch: '车辆调度',
