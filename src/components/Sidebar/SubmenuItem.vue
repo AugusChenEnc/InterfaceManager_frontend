@@ -2,7 +2,7 @@
     <div class="au-submenu-item">
         <template v-for="(item,index) in list" v-if="!item.hidden">
             <template v-if="typeof(item.children) != 'undefined' && checkChildren(item.children)">
-                <el-submenu :index="basepaths + item.path" :key="index">
+                <el-submenu :index="item.meta.title" :key="index">
                     <template slot="title">
                         <i :class="item.meta.icon"></i>
                         <span slot="title"> {{$t(item.meta.title)}} </span>
@@ -11,7 +11,7 @@
                 </el-submenu>
             </template>
             <template v-else>
-                <el-menu-item :index="basepaths + item.path" :key="index" v-if="!item.hidden" @click="$router.push(basepaths + item.path)">
+                <el-menu-item :index="item.meta.title" :key="index" v-if="!item.hidden" @click="$router.push(basepaths + item.path)">
                     <i :class="item.meta.icon"></i>
                     <span slot="title">{{$t(item.meta.title)}}</span>
                 </el-menu-item>

@@ -1,7 +1,7 @@
 <template>
     <el-scrollbar wrapClass="scrollbar-wrapper">
         <el-menu 
-            :default-active="$route.path" 
+            :default-active="$route.meta.title" 
             :collapse="isCollapse" 
             class="el-menu-vertical" 
             show-timeout="300" 
