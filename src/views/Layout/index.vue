@@ -154,7 +154,7 @@ export default {
     height calc(100vh - 10rem) 
 .home-content
     width 96%
-    margin 2rem auto
+    margin 1rem auto
     font-size 1.4rem
 
 .au-sidebar

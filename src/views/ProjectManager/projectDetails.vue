@@ -126,7 +126,6 @@ export default{
 						}
 					}
 
-					console.log(detailsForm.id);
 					if (detailsForm.id != null && detailsForm.id != "") {
 						fetchPut({
 							url: '/project/updateProject',

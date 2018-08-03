@@ -15,10 +15,21 @@ const tagsView = {
 
 			if (state.visitedViews.some(item => item.path === payload.path)) return
 
-			state.visitedViews.push({
-				title: payload.meta.title,
-				path: payload.path
-			})
+			let _list = state.visitedViews;
+			let _flag = true;
+			
+			_list.forEach(element => {
+				if (element.title == payload.meta.title) {
+					element.path = payload.path;
+					_flag = false;
+				}
+			});
+			if (_flag) {
+				_list.push({
+					title: payload.meta.title,
+					path: payload.path
+				})
+			}
 		},
 		del_visited_views: (state, payload) => {
 			
