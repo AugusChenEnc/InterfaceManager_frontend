@@ -10,8 +10,14 @@ export default {
         return {
             jstreeData:{
                 "data": {
-                    "id": "root",
-                    "text": '幼儿园项目222',
+                    "id": "ssss_root",
+                    "text": "幼儿园项目222",
+                    "children": [{
+                        "id": "xxxxfile",
+                        "text": "login",
+                        "type": "file",
+                        "icon": "fa fa-share"
+                    }]
                 },
                 "check_callback" : true,
             }
@@ -57,7 +63,8 @@ export default {
                         if(this.get_type(node) === "file") {
                             delete tmp.create;
                         }
-                        if(node.id === "root") {
+                        console.log(node.id);
+                        if((node.id).indexOf("root") != -1) {
                             delete tmp.remove;
                         }
 
