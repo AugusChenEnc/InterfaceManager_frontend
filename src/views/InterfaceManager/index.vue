@@ -1,7 +1,7 @@
 <template>
     <div class="au-interface-manager">
         <el-row type="flex" align="middle" v-for="(project, index) in projectList" :key="index">
-            <el-col :span="4" v-for="(item, index) in project" :key="index" :offset="index > 0 ? 1 : 0" class="au-card-check" @click.native="changeInterfaceDetails">
+            <el-col :span="4" v-for="(item, index) in project" :key="index" :offset="index > 0 ? 1 : 0" class="au-card-check" @click.native="changeInterfaceDetails(item.id)">
                 <el-card :body-style="{ padding: '0px' }">
                     <img src="~assets/images/login_background1.jpg" class="image">
                     <div style="padding: 10px;">
@@ -12,8 +12,6 @@
                 </el-card>
             </el-col>
         </el-row>
-
-        <router-view></router-view>
     </div>
 </template>
 
@@ -41,8 +39,8 @@ export default {
                 this.$message.error('加载错误');
             });
         },
-        changeInterfaceDetails(){
-            this.$router.push({ path: '/interface/interfaceDetails' });
+        changeInterfaceDetails(projectId){
+            this.$router.push({ path: '/interface/interfaceDetails/' + projectId });
         }
     }  
 }

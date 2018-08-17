@@ -67,7 +67,7 @@
                             placeholder="备注"
                             v-model="interfaceDetailsForm.remark"></el-input>
                     </el-form-item>
-
+                    
                     <el-form-item>
                         <el-button>重置</el-button>
                         <el-button type="primary">确定</el-button>

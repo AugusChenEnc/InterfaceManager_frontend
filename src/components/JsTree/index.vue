@@ -32,7 +32,7 @@ export default {
 
             //load Data
             fetchGet({
-                url: '/interfaceTree/188d3526-5082-43d3-a3b2-ce01e15ccde5/getTree'
+                url: '/interfaceTree/'+ this.$route.params.projectId +'/getTree'
             }).then(response => {
                 if (response.meta.statusCode == 200) {
                     _that.jstreeData.data = response.data;
