@@ -2195,6 +2195,22 @@
 			return tmp.id;
 		},
 		/**
+		 * 自己添加的方法生成UUID
+		 */
+		uuid : function() {
+			let s = [];
+			let hexDigits = "0123456789abcdef";
+			for (let i = 0; i < 36; i++) {
+				s[i] = hexDigits.substr(Math.floor(Math.random() * 0x10), 1);
+			}
+			s[14] = "4";  // bits 12-15 of the time_hi_and_version field to 0010
+			s[19] = hexDigits.substr((s[19] & 0x3) | 0x8, 1);  // bits 6-7 of the clock_seq_hi_and_reserved to 01
+			s[8] = s[13] = s[18] = s[23] = "-";
+		 
+			let uuid = s.join("").toString();
+			return uuid;
+		},
+		/**
 		 * parses a node from a JSON object and appends it to the in memory tree model. Used internally.
 		 * @private
 		 * @name _parse_model_from_json(d [, p, ps])
@@ -2209,7 +2225,8 @@
 			if(p) { ps.unshift(p); }
 			var tid = false, i, j, c, e, m = this._model.data, df = this._model.default_state, tmp;
 			do {
-				tid = 'j' + this._id + '_' + (++this._cnt);
+				//tid = 'j' + this._id + '_' + (++this._cnt);
+				tid = this.uuid();
 			} while(m[tid]);
 
 			tmp = {
