@@ -1,7 +1,6 @@
 import Vue from 'vue'
 import App from './App'
 import i18n from './lang'
-import axios from 'axios'
 import router from './router'
 import store from './store'
 import moment from 'moment'

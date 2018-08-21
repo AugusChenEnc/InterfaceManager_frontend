@@ -14,51 +14,59 @@
                     :rules="interfaceRules"
                     label-position="right" label-width="13rem" v-show="isShow" class="au-interface-elform">
                     
-                    <el-form-item label="请求地址：" prop="requestAddr">
-                        <el-input placeholder="请求地址" v-model="interfaceDetailsForm.requestAddr"></el-input>
+                    <el-form-item prop="id" v-show="false">
+                        <el-input v-model="interfaceDetailsForm.id"></el-input>
+                    </el-form-item>
+                    <el-form-item prop="treeId" v-show="false">
+                        <el-input v-model="interfaceDetailsForm.treeId"></el-input>
+                    </el-form-item>
+                    
+
+                    <el-form-item label="请求地址：" prop="reqAddress">
+                        <el-input placeholder="请求地址" v-model="interfaceDetailsForm.reqAddress"></el-input>
                     </el-form-item>
 
-                    <el-form-item label="请求地址说明：" prop="requestAddrExplanin">
+                    <el-form-item label="请求地址说明：" prop="reqAddressExplanin">
                         <el-input type="textarea"
                             :autosize="{ minRows: 5}" 
                             placeholder="请求地址说明"
-                            v-model="interfaceDetailsForm.requestAddrExplanin"></el-input>
+                            v-model="interfaceDetailsForm.reqAddressExplanin"></el-input>
                     </el-form-item>
                     <div>
                         
                     </div>
-                    <el-form-item label="请求类型：" prop="requestType">
-                        <el-input placeholder="请求类型" v-model="interfaceDetailsForm.requestTYpe"></el-input>
+                    <el-form-item label="请求类型：" prop="reqType">
+                        <el-input placeholder="请求类型" v-model="interfaceDetailsForm.reqType"></el-input>
                     </el-form-item>
 
-                    <el-form-item label="请求数据：" prop="requestData">
+                    <el-form-item label="请求数据：" prop="reqData">
                         <el-input type="textarea"
                             :autosize="{ minRows: 5}"
                             placeholder="请求数据"
-                            v-model="interfaceDetailsForm.requestData"></el-input>
+                            v-model="interfaceDetailsForm.reqData"></el-input>
                     </el-form-item>
 
-                    <el-form-item label="请求数据说明：" prop="requestDataExplanin">
+                    <el-form-item label="请求数据说明：" prop="reqDataExplanin">
                         <el-input type="textarea"
                             :autosize="{ minRows: 5}"
                             placeholder="请求数据说明"
-                            v-model="interfaceDetailsForm.requestDataExplanin"></el-input>
+                            v-model="interfaceDetailsForm.reqDataExplanin"></el-input>
                     </el-form-item>
 
 
-                    <el-form-item label="响应数据：" prop="responseData">
+                    <el-form-item label="响应数据：" prop="respData">
                         <el-input type="textarea"
                             :autosize="{ minRows: 5}"
                             placeholder="响应数据"
-                            v-model="interfaceDetailsForm.responseData"></el-input>
+                            v-model="interfaceDetailsForm.respData"></el-input>
                     </el-form-item>
 
 
-                    <el-form-item label="响应数据说明：" prop="responseDataExplanin">
+                    <el-form-item label="响应数据说明：" prop="respDataExplanin">
                         <el-input type="textarea"
                             :autosize="{ minRows: 5}"
                             placeholder="响应数据说明"
-                            v-model="interfaceDetailsForm.responseDataExplanin"></el-input>
+                            v-model="interfaceDetailsForm.respDataExplanin"></el-input>
                     </el-form-item>
 
                     <el-form-item label="备注：" prop="remark">
@@ -70,7 +78,7 @@
                     
                     <el-form-item>
                         <el-button>重置</el-button>
-                        <el-button type="primary">确定</el-button>
+                        <el-button type="primary" @click="changeConfirm">确定</el-button>
                     </el-form-item>
                 </el-form>
 
@@ -82,6 +90,7 @@
 
 <script>
 import JsTree from '@/components/JsTree'
+import { fetchGet, fetchPut } from '@/utils/api'
 
 export default {
     name: 'interfaceDetails',
@@ -89,23 +98,21 @@ export default {
         return {
             isShow: false,
             interfaceDetailsForm: {
-                requestAddr: '',
-                requestAddrExplanin: '',
-                requestType: '',
-                requestData: '',
-                requestDataExplanin: '',
-                responseData: '',
-                responseDataExplanin: '',
+                id: '',
+                treeId: '',
+                reqAddress: '',
+                reqAddressExplanin: '',
+                reqType: '',
+                reqData: '',
+                reqDataExplanin: '',
+                respData: '',
+                respDataExplanin: '',
                 remark: ''
             },
             interfaceRules:{
-                requestAddr: [ { required: true, message: '请输入请求地址', trigger: 'blur' } ],
-				requestAddrExplanin: [ { required: true, message: '请输入请求地址说明', trigger: 'blur'} ],
-				requestType: [ { required: true, message: '请输入请求类型', trigger: 'blur'} ],
-				requestData: [ { required: true, message: '请输入请求数据', trigger: 'blur'} ],
-                requestDataExplanin: [ { required: true, message: '请输入请求数据说明', trigger: 'blur'}],
-                responseData: [ { required: true, message: '请输入响应数据', trigger: 'blur'}],
-                responseDataExplanin: [ { required: true, message: '请输入响应数据说明', trigger: 'blur'}],
+                reqAddress: [ { required: true, message: '请输入请求地址', trigger: 'blur' } ],
+				reqType: [ { required: true, message: '请输入请求类型', trigger: 'blur'} ],
+                respData: [ { required: true, message: '请输入响应数据', trigger: 'blur'}],
             }
         }
     },
@@ -117,7 +124,30 @@ export default {
             let _jsTreeData = JSON.parse(data);
             
             this.isShow = _jsTreeData.isShow;
-            this.interfaceDetailsForm.requestAddr = _jsTreeData.data;
+            let _treeId = _jsTreeData.data;
+
+            fetchGet({
+                url: '/interfaceDetail/'+ _treeId + '/findInterfaceDetail'
+            }).then(response => {
+                this.interfaceDetailsForm = response.data;
+            }).catch(error => {
+                console.log(error);
+            })
+        },
+        changeConfirm(){
+            this.$refs.interfaceDetailsForm.validate(valid => {
+                if (valid) {
+                    console.log(this.interfaceDetailsForm);
+                    fetchPut({
+                        url: '/interfaceDetail/amendInterfaceDetail',
+                        params: this.interfaceDetailsForm
+                    }).then(response => {
+                        this.$message.success('操作成功');
+                    }).catch(error => {
+                        this.$message.error('操作失败');
+                    });
+                }
+            })
         }
     }
 }

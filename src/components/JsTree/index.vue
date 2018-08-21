@@ -136,7 +136,7 @@ export default {
 
                     if (_node.type === 'file') {
                         _isShow = true;
-                        _showData = _node.text;
+                        _showData = _node.id;
                     } 
 
                     _that.$emit('rightIsShowAndData', '{ "isShow": ' + _isShow + ', "data": "' + _showData + '"}');
